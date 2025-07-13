@@ -1,0 +1,20 @@
+# --- Laravel ---
+/backend/app/vendor/
+/backend/app/.env
+/backend/app/storage/*.key
+/backend/app/storage/*
+/backend/app/bootstrap/cache/*.php
+
+# --- React ---
+/frontend/app/node_modules/
+/frontend/app/dist/
+/frontend/app/.env
+
+# --- Common ---
+*.log
+*.pid
+*.swp
+*.swo
+.DS_Store
+.vscode/
+.idea/
