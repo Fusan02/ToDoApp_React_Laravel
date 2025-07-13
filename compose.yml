@@ -1,0 +1,60 @@
+services:
+  # ─────────────── PostgreSQL ───────────────
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: passw@rd
+      POSTGRES_DB: appdb
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  # ─────────────── Laravel API ───────────────
+  backend:
+    build: ./backend
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: appdb
+      DB_USERNAME: root
+      DB_PASSWORD: passw@rd
+    depends_on:
+      - db
+    ports:
+      - "8000:80"                 # ← http://localhost:8000
+    volumes:
+      - ./backend/app:/var/www/html
+
+  # ─────────────── React フロント ───────────────
+  frontend:
+    build: ./frontend
+    environment:
+      VITE_API_BASE: http://localhost:8000
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"               # ← http://localhost:5173
+    volumes: 
+      - ./frontend/app:/usr/src/app
+
+  # ─────────────── pgAdmin ───────────────
+  pgadmin:
+    image: dpage/pgadmin4:9.5
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: supersecret
+    depends_on:
+      - db
+    ports:
+      - "8888:80"                      # http://localhost:8888
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin  # 接続情報を永続化
+
+volumes:
+  dbdata:
+  pgadmin-data:
