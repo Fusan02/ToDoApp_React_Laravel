@@ -23,6 +23,8 @@ services:
       DB_DATABASE: appdb
       DB_USERNAME: root
       DB_PASSWORD: passw@rd
+      SANCTUM_STATEFUL_DOMAINS: localhost:5173
+      SESSION_DOMAIN: localhost
     depends_on:
       - db
     ports:
