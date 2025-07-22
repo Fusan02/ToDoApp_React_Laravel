@@ -2,10 +2,6 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { currentUser, login, logout, register } from "../lib/api";
 
 const AuthContext = createContext();
-export const useAuth = () => useContext(AuthContext);
-// export function useAuth() {
-// return useContext(AuthContext);
-// }
 
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
@@ -20,6 +16,11 @@ export function AuthProvider({ children }) {
         }
         setLoading(false);
     }
+    
+    // 初期化時に現在のユーザーを取得
+    // これにより、ページリロード後もログイン状態を維持できる
+    // また、useEffectの依存配列を空にすることで、コンポーネントのマウント時にのみ実行される
+    // これにより、無限ループを防ぎます。
     useEffect(() => { bootstrap(); }, []);
     
     const value = {
@@ -38,5 +39,17 @@ export function AuthProvider({ children }) {
         }
     };
 
-    return loading ? null : <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+    if (loading) {
+        return null; // ローディング中は何も表示しない
+    }
+    
+    return (
+        <AuthContext.Provider value={value}>
+            {children}
+        </AuthContext.Provider>
+    );
+}
+
+export function useAuth() {
+    return useContext(AuthContext);
 }
